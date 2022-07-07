@@ -258,3 +258,25 @@ def invoice():
         db.commit()
     except:
         print('Error ')
+
+
+def cancel():
+    import mysql.connector
+    try:
+        db=mysql.connector.connect(host="localhost",user="root",password='computer',database='movie_theatre')
+        cursor=db.cursor()
+        pho_no=int(input("Enter your 10 digit mobile number:"))
+        cursor.execute('select count(*) from main_customer_bookings where Customer_Mobile_Number=%s',(pho_no,))
+        mrecs=cursor.fetchall()
+        for x in mrecs:
+            a=x[0]
+        if a!=0:
+            cursor.execute('select * from main_customer_bookings where Customer_Mobile_Number=%s or Customer_Mobile_Number=%s',(pho_no,pho_no))
+            mrecs=cursor.fetchall()
+            cursor.execute('delete from main_customer_bookings where Customer_Mobile_Number=%s or Customer_Mobile_Number=%s',(pho_no,pho_no))
+            print('Booking cancelled')
+        else:
+            print('No bookings')
+        db.commit()
+    except:
+        print('Error')
