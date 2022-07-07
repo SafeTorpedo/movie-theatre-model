@@ -105,3 +105,68 @@ def refreshment():
     except Exception as e:
         print(e)
         print('Error')
+
+
+def booking():
+    
+    import mysql.connector
+    mob_no=int(input('Enter your 10 digit mobile number: '))
+    name=input('Enter your name: ')
+    import datetime
+    from datetime import date
+    today=date.today()
+    try:
+        db=mysql.connector.connect(host="localhost",user="root",password='computer',database='movie_theatre')
+        print('Welcome',name)
+        print('Movies Screening today are: ')
+        cursor=db.cursor()
+        cursor.execute("SELECT * FROM MOVIE_DETAILS")
+        mrecs=cursor.fetchall()
+        for x in mrecs:
+            print(x)
+        ser=int(input("Enter serial number of the movie: "))
+        qry="select Movie_Name from movie_details where Serial_Number=%s or Serial_Number=%s;"
+        cursor.execute(qry,(ser,ser))
+        mrecs=cursor.fetchall()
+        for x in mrecs:
+            mov=str(x)
+            mov=mov[2:-3]
+            print('Movie Selected: ',mov)
+        qry="select Price_per_Seat from movie_details where Movie_Name=%s or Movie_Name=%s;"
+        cursor.execute(qry,(mov,mov))
+        mrecs=cursor.fetchall()
+        for x in mrecs:
+            price=int(str(x)[1:-2])
+            print(price)
+        seats=int(input('Enter the number of seats: '))
+        if ser==1:
+            tim='10:00:00'
+        elif ser==2:
+            tim='13:00:00'
+        elif ser==3:
+            tim='16:30:00'
+        elif ser==4:
+            tim='19:00:00'
+        elif ser==5:
+            tim='22:00:00'
+        refchoi=input('Want to add refreshments?(y/n): ')
+        if refchoi=='y':
+            ref,refprice=refreshment()
+        else:
+            refprice=0
+            ref='  '
+        print(ref,refprice)
+        totpayable=(price*seats)+refprice
+        now=datetime.datetime.now()
+        i_no=now.year+now.month+now.day+now.hour+now.minute+now.second
+        i_no=int(i_no)
+        today=str(today)
+        qry='insert into main_customer_bookings values(%s,%s,%s,%s,%s,%s,%s,%s,%s);'
+        ins=[mob_no,name,today,tim,seats,ref,totpayable,i_no,mov]
+        cursor.execute(qry,ins)
+        db.commit()
+        print('Your Invoice number is: ',i_no)
+        print('Your booking is confirmed! Thank You')
+    except Exception as e :
+        print(e)
+        print('Error in booking')
