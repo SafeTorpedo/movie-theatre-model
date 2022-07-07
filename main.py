@@ -280,3 +280,32 @@ def cancel():
         db.commit()
     except:
         print('Error')
+
+
+def sales_mgmt():
+    import mysql.connector
+    try:
+        db=mysql.connector.connect(host="localhost",user="root",password='computer',database='movie_theatre')
+        cursor=db.cursor()
+        print('Movies Screening: ')
+        cursor.execute('select Movie_Name from movie_details;')
+        mrecs=cursor.fetchall()
+        L=[]
+        for x in mrecs:
+            print(x[0])
+            L.append(x[0])
+        choice=int(input('Enter Serial no. of movie to be analysed: '))
+        check=str(L[choice-1])
+        print(check)
+        cursor.execute('select sum(Total_Payable) from main_customer_bookings where Movie_Name=%s or Movie_Name=%s;',(check,check))
+        mrecs=cursor.fetchall()
+        for x in mrecs:
+            print('Sales for ',L[choice-1],'-->', x[0])
+    except Exception as e:
+        print(e)
+        print('Error')
+        
+                
+
+
+menu()
