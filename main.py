@@ -170,3 +170,22 @@ def booking():
     except Exception as e :
         print(e)
         print('Error in booking')
+
+
+def enquiry():
+        import mysql.connector
+        import pandas as pd
+        try:
+            db=mysql.connector.connect(host="localhost",user="root",password='computer',database='movie_theatre')
+            cursor=db.cursor()
+            print("Welcome to ABC Movie Theatre: ")
+            cursor.execute('Select * from movie_details;')
+            head=['S no.','Movie Name','Movie Time','Price per Seat']
+            values=[]
+            mrecs=cursor.fetchall()
+            for x in mrecs:
+                values.append(x)
+            details=pd.DataFrame(values,columns=head,index=['Hall 1','Hall 2','Hall 3','Hall 4','Hall 5'])
+            print(details)
+        except:
+            print('Error')
