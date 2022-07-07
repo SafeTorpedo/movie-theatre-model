@@ -63,3 +63,45 @@ def menu():
         else:
             print('Wrong Choice Entered')
         c=input('Do you want to continue?(y/n): ')
+
+
+def refreshment():
+    import mysql.connector
+    import pandas as pd
+    try:
+        db=mysql.connector.connect(host="localhost",user="root",password='computer',database='movie_theatre')
+        cursor=db.cursor()
+        cursor.execute('select Items,Price from refreshment_counter;')
+        mrecs=cursor.fetchall()
+        ref=''
+        refprice=0
+        col=['Items','Price']
+        data=[]
+        for x in mrecs:
+            data.append(x)
+        refreshments_disp=pd.DataFrame(data,columns=col)
+        print(refreshments_disp)
+        mor='y'
+        while mor=='y':
+            food_no=int(input('Enter serial number: '))
+            qty=int(input('Enter quantity: '))
+            qry='select Items from refreshment_counter where Serial_Number=%s or Serial_Number=%s;'
+            cursor.execute(qry,(food_no,food_no))
+            mrecs=cursor.fetchall()
+            for x in mrecs:
+                item=str(x)[2:-3]
+            qry='select Price from refreshment_counter where Serial_Number=%s or Serial_Number=%s;'
+            cursor.execute(qry,(food_no,food_no))
+            mrecs=cursor.fetchall()
+            for x in mrecs:
+                tot=(int(str(x)[1:-2]))*qty
+            print(qty,item,'=',tot)
+            ref=ref+(str(qty)+' '+item+' ')
+            refprice=refprice+tot
+            mor=input('Want to add more refreshment?(y/n): ')
+        print('Thank you for buying')
+        return ref,refprice
+        print('Thank you for buying!!')
+    except Exception as e:
+        print(e)
+        print('Error')
