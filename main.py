@@ -189,3 +189,72 @@ def enquiry():
             print(details)
         except:
             print('Error')
+
+
+def invoice():
+    import mysql.connector
+    try:
+        db=mysql.connector.connect(host="localhost",user="root",password='computer',database='movie_theatre')
+        cursor=db.cursor()
+        import datetime
+        now=datetime.datetime.now()
+        dtm=str(now)
+        num=int(input("Enter your 10 digit mobile number: "))
+        cursor.execute('select * from main_customer_bookings where Customer_Mobile_Number=%s or Customer_Mobile_Number=%s;',(num,num))
+        mrecs=cursor.fetchall()
+        L=[]
+        for x in mrecs:
+            print('We are finding your booking')
+            L.append(x)
+        if len(L)!=0:
+            print('Booking Found')
+            print('Invoice Printing in Process!!')
+            cursor.execute('select Customer_Name from main_customer_bookings where Customer_Mobile_Number=%s or Customer_Mobile_Number=%s;',(num,num))
+            mrecs=cursor.fetchall()
+            for x in mrecs:
+                invo_name=str(x)
+                invo_name=invo_name[2:-3]
+            cursor.execute('select Invoice_Number from main_customer_bookings where Customer_Mobile_Number=%s or Customer_Mobile_Number=%s;',(num,num))
+            mrecs=cursor.fetchall()
+            for x in mrecs:
+                invo_no=int(str(x)[1:-2])
+            cursor.execute('select Total_Payable from main_customer_bookings where Customer_Mobile_Number=%s or Customer_Mobile_Number=%s;',(num,num))
+            mrecs=cursor.fetchall()
+            for x in mrecs:
+                tot_sal=int(str(x)[1:-2])
+            cursor.execute('select Movie_Name from main_customer_bookings where Customer_Mobile_Number=%s or Customer_Mobile_Number=%s;',(num,num))
+            mrecs=cursor.fetchall()
+            for x in mrecs:
+                mov_name=str(x)
+                mov_name=mov_name[2:-3]
+            cursor.execute('select Refreshments from main_customer_bookings where Customer_Mobile_Number=%s or Customer_Mobile_Number=%s;',(num,num))
+            mrecs=cursor.fetchall()
+            for x in mrecs:
+                refresh=str(x)
+                refresh=refresh[2:-3]
+            cursor.execute('select Number_of_Seats from main_customer_bookings where Customer_Mobile_Number=%s or Customer_Mobile_Number=%s',(num,num))
+            mrecs=cursor.fetchall()
+            for x in mrecs:
+                no_seats=int(str(x)[1:-2])
+            print("-"*65)
+            print("\t\t\t\tInvoice")
+            print("-"*65)
+            print()
+            print("Date :{0:>55s}".format(dtm))
+            print("-"*65)
+            print("Customer Mobile Number:\t\t ",num)
+            print("Customer Name: \t\t\t",invo_name)
+            print("Movie Name: \t\t\t",mov_name)
+            print("Number of Seats: \t\t",no_seats)
+            print("Refreshments:\t\t",refresh)
+            print("Invoice Number: \t\t",invo_no)
+            print("Total Payable: \t\t",tot_sal)
+            print("-"*65)
+            print("\t\tThank You! Vist Again!!")
+            print()
+            cursor.execute('insert into customer_invoices values(%s,%s,%s,%s,%s,%s,%s);',[num,invo_name,mov_name,no_seats,refresh,invo_no,tot_sal])  
+        else:
+            print('Booking not found!!')
+        db.commit()
+    except:
+        print('Error ')
