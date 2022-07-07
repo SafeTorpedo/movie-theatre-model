@@ -31,3 +31,35 @@ sql = "CREATE TABLE if not exists refreshment_counter (\
                   Items varchar(50),\
                   Price int(4));"
 cursor.execute(sql)
+
+
+def menu():
+    c = 'y'
+    choice=0
+    while c == 'y':
+        print('Hello')
+        print('Welcome to ABC Movie Theatre')
+        print('Please make a choice:')
+        print('1. Book Tickets')
+        print('2. Enquiry of Shows')
+        print('3. Printing Invoice')
+        print('4. Cancel Booking')
+        print('5. Sales Management')
+        print('6. Exit')
+        choice=int(input('Enter your choice: '))
+        if choice==1:
+            booking()
+        elif choice==2:
+            enquiry()
+        elif choice==3:
+            invoice()
+        elif choice==4:
+            cancel()
+        elif choice==5:
+            sales_mgmt()
+        elif choice==6:
+            print('Thank You! Visit Again')
+            break
+        else:
+            print('Wrong Choice Entered')
+        c=input('Do you want to continue?(y/n): ')
